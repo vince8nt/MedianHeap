@@ -1,24 +1,53 @@
+import java.io.*;
+import java.util.Scanner;
 
 class MedianHeap {
-	static final String usage = "Usage: MedianHeap A[0] A[1] ...\n";
+	static final String usage = "Usage: MedianHeap <input file> <output file>";
 
-	public static void main(String[] args) {
-		if (args.length < 2) { // array must be at least 2 long
-			System.out.print(usage);
-			return;
+	public static void main(String[] args) throws IOException {
+		// make sure 2 args are given
+		if (args.length != 2) {
+			System.err.println(usage);
+			System.exit(1);
 		}
 
-		// setup arr
-		int[] arr = new int[args.length];
-		for (int i = 0; i < args.length; i++) {
+		// setup <in> and <out>
+		Scanner in;
+		PrintWriter out;
+		try {
+			new Scanner(new File(args[0]));
+		}
+		catch (Exception e) {
+			System.err.println(args[0] + " (No such file or directory)");
+			System.err.println(usage);
+			System.exit(1);
+		}
+		in = new Scanner(new File(args[0]));
+
+		// scan <in> for arr length
+		int length = 0;
+		try {
+			length = in.nextInt();
+		}
+		catch (Exception e) {
+			System.err.println(args[0] + " (Incorrect formatting of length)");
+			System.err.println(usage);
+			System.exit(1);
+		}
+
+		// scan <in> for arr values
+		int[] arr = new int[length];
+		for (int i = 0; i < length; i++) {
 			try {
-				arr[i] = Integer.parseInt(args[i]);
+				arr[i] = in.nextInt();
 			}
-			catch (Exception e) { // non-integer arg is found
-				System.out.printf("\"%s\" is not an integer\n%s", args[i], usage);
-				return;
+			catch (Exception e) { // non-integer is found
+				System.err.printf("%s (Incorrect formatting at index %d)\n", args[0], i);
+				System.err.println(usage);
+				System.exit(1);
 			}
 		}
+		in.close();
 
 		// print arr as entered to console
 		System.out.printf("Array of length %d was entered:\n", arr.length);
@@ -30,6 +59,12 @@ class MedianHeap {
 		// print sorted arr to console
 		System.out.println("\nAfter median heap sort:");
 		System.out.println(stringRep(arr));
+
+		// print sorted arr to <out>
+		out = new PrintWriter(new FileWriter(args[1]));
+		out.println(length);
+		out.println(stringRep(arr));
+		out.close();
 	}
 
 	// returns a string representation of arr
