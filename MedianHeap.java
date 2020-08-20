@@ -22,14 +22,14 @@ class MedianHeap {
 		System.out.println(stringRep(arr));
 
 		// build min heap
-		/*
-		for (int i = arr.length / 2 - 1; i >= 0; i--)
-			minHeapify(arr, 0, arr.length, i);
-		*/
+		buildMinHeap(arr, 1, arr.length - 1);
 
 		// build backwards max heap
-		for (int i = (arr.length + 1) / 2; i < arr.length; i++)
-			backMaxHeapify(arr, arr.length - 1, arr.length, i);
+		// buildBackMaxHeap(arr, 0, arr.length - 1);
+
+		// medianHeapSort(arr, 0, arr.length - 1);
+
+
 
 		System.out.println("\nAfter heapify:");
 		System.out.println(stringRep(arr));
@@ -46,35 +46,40 @@ class MedianHeap {
 		return temp;
 	}
 
-	
+	private static void medianHeapSort(int[] arr, int begin, int end) {
+		if (end > begin) {
+			int mid = (begin + end) / 2;
+			System.out.println("mid is: " + mid);
+			buildBackMaxHeap(arr, begin, mid);
+			buildMinHeap(arr, mid + 1, end);
+			/*
+			while (arr[mid] > arr[mid + 1]) {
+				// swap arr[mid] and arr[mid + 1]
+				int temp = arr[mid];
+				arr[mid] = arr[mid + 1];
+				arr[mid + 1] = temp;
+				backMaxHeapify(arr, mid, mid - begin + 1, mid);
+				minHeapify(arr, mid + 1, end - mid, mid + 1);
+			}
+			*/
 
-
-	private static void maxHeapify(int[] arr, int start, int size, int root) {
-		int largest = root;
-		int l = 2 * (root - start) + 1;
-		int r = 2 * (root - start) + 2;
-
-		if (l < start + size && arr[l] > arr[largest])
-			largest = l;
-
-		if (r < start + size && arr[r] > arr[largest])
-			largest = r;
-
-		if (largest != root) {
-			// swap arr[root] and arr[largest]
-			int temp = arr[root];
-			arr[root] = arr[largest];
-			arr[largest] = temp;
-
-			// heapify the subtree
-			maxHeapify(arr, start, size, largest);
+			/*
+			medianHeapSort(arr, begin, mid - 1);
+			medianHeapSort(arr, mid + 1, end);
+			*/
 		}
+	}
+
+	private static void buildMinHeap(int[] arr, int begin, int end) {
+		int n = end - begin + 1;
+		for (int i = n / 2 - 1 + begin; i >= begin; i--)
+			minHeapify(arr, begin, n, i);
 	}
 
 	private static void minHeapify(int[] arr, int start, int size, int root) {
 		int smallest = root;
-		int l = 2 * (root - start) + 1;
-		int r = 2 * (root - start) + 2;
+		int l = 2 * root - start + 1;
+		int r = 2 * root - start + 2;
 
 		if (l < start + size && arr[l] < arr[smallest])
 			smallest = l;
@@ -87,10 +92,14 @@ class MedianHeap {
 			int temp = arr[root];
 			arr[root] = arr[smallest];
 			arr[smallest] = temp;
-
 			// heapify the subtree
 			minHeapify(arr, start, size, smallest);
 		}
+	}
+
+	private static void buildBackMaxHeap(int[] arr, int begin, int end) {
+		for (int i = (end + begin) / 2; i <= end; i++)
+			backMaxHeapify(arr, end, end - begin + 1, i);
 	}
 
 	private static void backMaxHeapify(int[] arr, int end, int size, int root) {
